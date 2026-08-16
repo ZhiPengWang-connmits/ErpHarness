@@ -1,0 +1,23 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+erp_harness01_venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# LangGraph local runtime state
+.langgraph_api/
+
+# Local secrets and environment variables
+.env
+.env.*
+
+# Frontend (Vue/Vite)
+node_modules/
+frontend/dist/
+
+# IDE
+.idea/

@@ -1,0 +1,3340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摩托配件商城 - 摩托车配件展示中心</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #333; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+        .header { text-align: center; margin-bottom: 60px; }
+        .logo { font-size: 48px; color: #fff; margin-bottom: 20px; }
+        .logo i { color: #e2231a; margin-right: 15px; }
+        .header h1 { font-size: 42px; color: #fff; margin-bottom: 15px; font-weight: 700; }
+        .header p { font-size: 18px; color: rgba(255,255,255,0.7); }
+        .search-bar { max-width: 600px; margin: 30px auto; display: flex; gap: 10px; }
+        .search-bar input { flex: 1; padding: 15px 20px; border: none; border-radius: 8px; font-size: 16px; }
+        .search-bar button { padding: 15px 30px; background: #e2231a; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        .category-section { margin-bottom: 60px; }
+        .category-title { font-size: 28px; color: #fff; margin-bottom: 30px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .category-title i { color: #e2231a; }
+        .category-count { font-size: 14px; color: rgba(255,255,255,0.6); margin-left: 10px; }
+        .parts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .part-card { background: #fff; border-radius: 16px; overflow: hidden; transition: all 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .part-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(226,35,26,0.3); }
+        .part-header { padding: 15px 20px; background: linear-gradient(135deg, #f8f8f8, #f0f0f0); border-bottom: 1px solid #eee; }
+        .part-code { font-size: 12px; color: #999; margin-bottom: 5px; }
+        .part-name { font-size: 15px; color: #333; font-weight: 600; }
+        .brands-list { padding: 12px; max-height: 280px; overflow-y: auto; }
+        .brand-item { display: flex; align-items: center; padding: 10px; border-radius: 8px; margin-bottom: 8px; background: #fafafa; transition: all 0.2s; }
+        .brand-item:last-child { margin-bottom: 0; }
+        .brand-item:hover { background: #fff0f0; transform: translateX(5px); }
+        .brand-color { width: 6px; height: 35px; border-radius: 3px; margin-right: 10px; flex-shrink: 0; }
+        .brand-info { flex: 1; min-width: 0; }
+        .brand-name { font-size: 13px; color: #333; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .brand-origin { font-size: 11px; color: #999; }
+        .brand-price { text-align: right; flex-shrink: 0; margin-left: 10px; }
+        .price-current { font-size: 16px; color: #e2231a; font-weight: bold; }
+        .price-original { font-size: 11px; color: #999; text-decoration: line-through; margin-left: 5px; display: block; }
+        .view-btn-small { display: inline-block; padding: 5px 12px; background: #e2231a; color: #fff; border-radius: 4px; font-size: 11px; text-decoration: none; transition: all 0.2s; white-space: nowrap; }
+        .view-btn-small:hover { background: #c81e1a; }
+        .stats-section { background: rgba(255,255,255,0.1); border-radius: 16px; padding: 40px; margin-bottom: 60px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; text-align: center; }
+        .stat-item { color: #fff; }
+        .stat-number { font-size: 48px; font-weight: bold; color: #e2231a; margin-bottom: 10px; }
+        .stat-label { font-size: 16px; color: rgba(255,255,255,0.7); }
+        .filter-bar { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .filter-btn { padding: 10px 20px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .filter-btn:hover, .filter-btn.active { background: #e2231a; border-color: #e2231a; }
+        .footer { text-align: center; padding: 30px; color: rgba(255,255,255,0.5); font-size: 14px; }
+        .brand-count { display: inline-block; background: #e2231a; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 8px; }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .header h1 { font-size: 28px; }
+            .parts-grid { grid-template-columns: 1fr; }
+            .brands-list { max-height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"><i class="fas fa-motorcycle"></i> 摩托配件商城</div>
+            <h1>摩托车配件多品牌展示中心</h1>
+            <p>精选优质配件，40+配件种类，200+品牌选择</p>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" placeholder="搜索配件名称、品牌..." id="searchInput">
+            <button onclick="filterParts()"><i class="fas fa-search"></i> 搜索</button>
+        </div>
+
+        <div class="filter-bar">
+            <span class="filter-btn active" onclick="filterCategory('all')">全部</span>
+            <span class="filter-btn" onclick="filterCategory('engine')">发动机类</span>
+            <span class="filter-btn" onclick="filterCategory('frame')">车架类</span>
+            <span class="filter-btn" onclick="filterCategory('electrical')">电气类</span>
+            <span class="filter-btn" onclick="filterCategory('brake')">制动类</span>
+            <span class="filter-btn" onclick="filterCategory('transmission')">传动类</span>
+            <span class="filter-btn" onclick="filterCategory('exterior')">外观件</span>
+        </div>
+
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">配件品类</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">52</div>
+                    <div class="stat-label">配件种类</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">40+</div>
+                    <div class="stat-label">精选品牌</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">200+</div>
+                    <div class="stat-label">品牌变体</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 发动机与传动系统 ========== -->
+        <div class="category-section" data-category="engine">
+            <div class="category-title"><i class="fas fa-cogs"></i> 发动机与传动系统 <span class="category-count">发动机类配件</span></div>
+            <div class="parts-grid">
+                <!-- 活塞环 -->
+                <div class="part-card" data-part="pistonRing">
+                    <div class="part-header">
+                        <div class="part-code">PC2001</div>
+                        <div class="part-name">活塞环组件 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#8B4513"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GUGGI古奇</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥280</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="piston-ring-guggi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NHK</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥320</span>
+                                <span class="price-original">¥450</span>
+                            </div>
+                            <a href="pistonRing-nhk.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#4169E1"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RING</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥260</span>
+                                <span class="price-original">¥360</span>
+                            </div>
+                            <a href="pistonRing-ring.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 发动机缸体 -->
+                <div class="part-card" data-part="cylinderBlock">
+                    <div class="part-header">
+                        <div class="part-code">PC2002</div>
+                        <div class="part-name">发动机缸体 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KYMCO光阳</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥2,800</span>
+                                <span class="price-original">¥3,800</span>
+                            </div>
+                            <a href="engine-assembly-kymco.html" class="view-btn-small">查看</a>
+                        </div>
+                        <!-- 原厂品质 -->
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#666666"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">铃木原厂</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥3,800</span>
+                                <span class="price-original">¥5,200</span>
+                            </div>
+                            <a href="engine-assembly.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SYM三阳</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥2,600</span>
+                                <span class="price-original">¥3,500</span>
+                            </div>
+                            <a href="cylinderBlock-sym.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GHM</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥3,200</span>
+                                <span class="price-original">¥4,500</span>
+                            </div>
+                            <a href="cylinderBlock-ghm.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 曲轴总成 -->
+                <div class="part-card" data-part="crankshaft">
+                    <div class="part-header">
+                        <div class="part-code">PC2003</div>
+                        <div class="part-name">曲轴总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#8B0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HOTROD</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥680</span>
+                                <span class="price-original">¥980</span>
+                            </div>
+                            <a href="crankshaft-hotrod.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KENSO</div>
+                                <div class="brand-origin">马来西亚</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥520</span>
+                                <span class="price-original">¥720</span>
+                            </div>
+                            <a href="crankshaft-kenso.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#4169E1"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">COMETIC</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥880</span>
+                                <span class="price-original">¥1,280</span>
+                            </div>
+                            <a href="crankshaft-cometic.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 凸轮轴 -->
+                <div class="part-card" data-part="camshaft">
+                    <div class="part-header">
+                        <div class="part-code">PC2004</div>
+                        <div class="part-name">凸轮轴 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HEPCO</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="camshaft-hepco.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KIMPEX</div>
+                                <div class="brand-origin">加拿大</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥420</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="camshaft-kimpex.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#8B4513"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SPEC</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥560</span>
+                                <span class="price-original">¥780</span>
+                            </div>
+                            <a href="camshaft-spec.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 气门导管 -->
+                <div class="part-card" data-part="valveGuide">
+                    <div class="part-header">
+                        <div class="part-code">PC2005</div>
+                        <div class="part-name">气门导管 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">TRW</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥38</span>
+                                <span class="price-original">¥58</span>
+                            </div>
+                            <a href="valveGuide-trw.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MAHLE</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥42</span>
+                                <span class="price-original">¥65</span>
+                            </div>
+                            <a href="valveGuide-mahle.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">FEBi</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥35</span>
+                                <span class="price-original">¥52</span>
+                            </div>
+                            <a href="valveGuide-febi.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 连杆总成 -->
+                <div class="part-card" data-part="connectingRod">
+                    <div class="part-header">
+                        <div class="part-code">PC2006</div>
+                        <div class="part-name">连杆总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#8B0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HOTROD</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥380</span>
+                                <span class="price-original">¥520</span>
+                            </div>
+                            <a href="connectingRod-hotrod.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PROX</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥420</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="connectingRod-prox.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#4169E1"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">WOSSNER</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="connectingRod-wossner.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 机油泵 -->
+                <div class="part-card" data-part="oilPump">
+                    <div class="part-header">
+                        <div class="part-code">PC2007</div>
+                        <div class="part-name">机油泵 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CHAMPION冠军</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥280</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="oil-pump-champion.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MAHLE</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥320</span>
+                                <span class="price-original">¥450</span>
+                            </div>
+                            <a href="oilPump-mahle.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">WONDERTE</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥260</span>
+                                <span class="price-original">¥360</span>
+                            </div>
+                            <a href="oilPump-wondertech.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 水泵总成 -->
+                <div class="part-card" data-part="waterPump">
+                    <div class="part-header">
+                        <div class="part-code">PC2008</div>
+                        <div class="part-name">水泵总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">AISIN</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥420</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="waterPump-aisin.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CLOYES</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥380</span>
+                                <span class="price-original">¥520</span>
+                            </div>
+                            <a href="waterPump-cloyes.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GATES</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥360</span>
+                                <span class="price-original">¥480</span>
+                            </div>
+                            <a href="waterPump-gates.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 化油器 -->
+                <div class="part-card" data-part="carburetor">
+                    <div class="part-header">
+                        <div class="part-code">PC2009</div>
+                        <div class="part-name">化油器总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MIKUNI</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="carburetor-mikuni.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KEIHIN</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥520</span>
+                                <span class="price-original">¥720</span>
+                            </div>
+                            <a href="carburetor-keihin.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">Tillotson</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥420</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="carburetor-tillotson.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 离合器片 -->
+                <div class="part-card" data-part="clutchPlate">
+                    <div class="part-header">
+                        <div class="part-code">PC2010</div>
+                        <div class="part-name">离合器片 <span class="brand-count">4品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">EBC</div>
+                                <div class="brand-origin">英国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥320</span>
+                                <span class="price-original">¥450</span>
+                            </div>
+                            <a href="clutchPlate-ebc.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">STOMP</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥280</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="clutchPlate-stomp.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NEWFRICTION</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥350</span>
+                                <span class="price-original">¥480</span>
+                            </div>
+                            <a href="clutchPlate-newfriction.html" class="view-btn-small">查看</a>
+                        </div>
+                        <!-- 进口品质 -->
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#795548"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">进口品质</div>
+                                <div class="brand-origin">进口</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥260</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="clutch-plate.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">健达</div>
+                                <div class="brand-origin">国产</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="clutch-plate-jianda.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 启动电机 -->
+                <div class="part-card" data-part="starterMotor">
+                    <div class="part-header">
+                        <div class="part-code">PC2011</div>
+                        <div class="part-name">启动电机 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DAIDO电锭</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥380</span>
+                                <span class="price-original">¥520</span>
+                            </div>
+                            <a href="starter-motor-daido.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DENSO电装</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥420</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="starterMotor-denso.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BOSCH</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="starterMotor-bosch.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 发电机总成 -->
+                <div class="part-card" data-part="generator">
+                    <div class="part-header">
+                        <div class="part-code">PC2012</div>
+                        <div class="part-name">发电机总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥680</span>
+                                <span class="price-original">¥980</span>
+                            </div>
+                            <a href="generator-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HITACHI</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥720</span>
+                                <span class="price-original">¥1,020</span>
+                            </div>
+                            <a href="generator-hitachi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DUCATI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥880</span>
+                                <span class="price-original">¥1,280</span>
+                            </div>
+                            <a href="generator-ducati.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 电气系统 ========== -->
+        <div class="category-section" data-category="electrical">
+            <div class="category-title"><i class="fas fa-bolt"></i> 电气系统 <span class="category-count">电气类配件</span></div>
+            <div class="parts-grid">
+                <!-- 火花塞 -->
+                <div class="part-card" data-part="sparkPlug">
+                    <div class="part-header">
+                        <div class="part-code">EC4003</div>
+                        <div class="part-name">火花塞 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NGK</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥68</span>
+                                <span class="price-original">¥88</span>
+                            </div>
+                            <a href="spark-plug.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BOSCH</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥48</span>
+                                <span class="price-original">¥68</span>
+                            </div>
+                            <a href="spark-plug-bosch.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DENSO电装</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥38</span>
+                                <span class="price-original">¥52</span>
+                            </div>
+                            <a href="spark-plug-denso.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 点火线圈 -->
+                <div class="part-card" data-part="ignitionCoil">
+                    <div class="part-header">
+                        <div class="part-code">EC4002</div>
+                        <div class="part-name">点火线圈 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NGK</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥128</span>
+                                <span class="price-original">¥188</span>
+                            </div>
+                            <a href="ignitionCoil-ngk.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BOSCH</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥98</span>
+                                <span class="price-original">¥148</span>
+                            </div>
+                            <a href="ignitionCoil-bosch.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DENSO电装</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥88</span>
+                                <span class="price-original">¥128</span>
+                            </div>
+                            <a href="ignitionCoil-denso.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 磁电机总成 -->
+                <div class="part-card" data-part="magneto">
+                    <div class="part-header">
+                        <div class="part-code">EC4001</div>
+                        <div class="part-name">磁电机总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥580</span>
+                                <span class="price-original">¥820</span>
+                            </div>
+                            <a href="magneto-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KOKUSAN</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥620</span>
+                                <span class="price-original">¥880</span>
+                            </div>
+                            <a href="magneto-kokusan.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SHINDENGEN</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥680</span>
+                                <span class="price-original">¥980</span>
+                            </div>
+                            <a href="magneto-shindengen.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 整流器 -->
+                <div class="part-card" data-part="rectifier">
+                    <div class="part-header">
+                        <div class="part-code">EC4004</div>
+                        <div class="part-name">整流器 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SHINDENGEN</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="rectifier-shindengen.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KOKUSAN</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥150</span>
+                                <span class="price-original">¥220</span>
+                            </div>
+                            <a href="rectifier-kokusan.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RICKY</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥88</span>
+                                <span class="price-original">¥128</span>
+                            </div>
+                            <a href="rectifier-ricky.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 电瓶 -->
+                <div class="part-card" data-part="battery">
+                    <div class="part-header">
+                        <div class="part-code">EC-BAT</div>
+                        <div class="part-name">摩托车电瓶 <span class="brand-count">2品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#607D8B"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">统一电瓶</div>
+                                <div class="brand-origin">国产</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥268</span>
+                                <span class="price-original">¥358</span>
+                            </div>
+                            <a href="battery.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">YUASA汤浅</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥358</span>
+                                <span class="price-original">¥480</span>
+                            </div>
+                            <a href="battery-yuasa.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 大灯总成 -->
+                <div class="part-card" data-part="headlight">
+                    <div class="part-header">
+                        <div class="part-code">EC4005</div>
+                        <div class="part-name">大灯总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SHOWA昭和</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥320</span>
+                                <span class="price-original">¥450</span>
+                            </div>
+                            <a href="headlight-showa.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PHILIPS</div>
+                                <div class="brand-origin">荷兰</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥280</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="headlight-philips.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">OSRAM</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥350</span>
+                                <span class="price-original">¥480</span>
+                            </div>
+                            <a href="headlight-osram.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 尾灯总成 -->
+                <div class="part-card" data-part="taillight">
+                    <div class="part-header">
+                        <div class="part-code">EC4006</div>
+                        <div class="part-name">尾灯总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">LED</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥180</span>
+                            </div>
+                            <a href="taillight-led.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CIBIE</div>
+                                <div class="brand-origin">法国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="taillight-cibie.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PIAA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥220</span>
+                                <span class="price-original">¥320</span>
+                            </div>
+                            <a href="taillight-piaa.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 转向灯 -->
+                <div class="part-card" data-part="turnSignal">
+                    <div class="part-header">
+                        <div class="part-code">EC4007</div>
+                        <div class="part-name">转向灯 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CREST</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥48</span>
+                                <span class="price-original">¥72</span>
+                            </div>
+                            <a href="turnSignal-crest.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KIJIMA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥68</span>
+                                <span class="price-original">¥98</span>
+                            </div>
+                            <a href="turnSignal-kijima.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PIAA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥88</span>
+                                <span class="price-original">¥128</span>
+                            </div>
+                            <a href="turnSignal-piaa.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 仪表总成 -->
+                <div class="part-card" data-part="meter">
+                    <div class="part-header">
+                        <div class="part-code">EC4008</div>
+                        <div class="part-name">仪表总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥680</span>
+                                <span class="price-original">¥980</span>
+                            </div>
+                            <a href="meter-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KOSO</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="meter-koso.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MSTR</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥580</span>
+                                <span class="price-original">¥820</span>
+                            </div>
+                            <a href="meter-mstr.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 喇叭 -->
+                <div class="part-card" data-part="horn">
+                    <div class="part-header">
+                        <div class="part-code">EC4009</div>
+                        <div class="part-name">喇叭 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DENSO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥68</span>
+                                <span class="price-original">¥98</span>
+                            </div>
+                            <a href="horn-denso.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">FIAMM</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥88</span>
+                                <span class="price-original">¥128</span>
+                            </div>
+                            <a href="horn-fiamm.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HOREX</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥108</span>
+                                <span class="price-original">¥158</span>
+                            </div>
+                            <a href="horn-horex.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 闪光器 -->
+                <div class="part-card" data-part="flasher">
+                    <div class="part-header">
+                        <div class="part-code">EC4010</div>
+                        <div class="part-name">闪光器 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥28</span>
+                                <span class="price-original">¥42</span>
+                            </div>
+                            <a href="flasher-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KOKUSAN</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥32</span>
+                                <span class="price-original">¥48</span>
+                            </div>
+                            <a href="flasher-kokusan.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HELLA</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥45</span>
+                                <span class="price-original">¥65</span>
+                            </div>
+                            <a href="flasher-hella.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 手把开关 -->
+                <div class="part-card" data-part="handlebarSwitch">
+                    <div class="part-header">
+                        <div class="part-code">EC4011</div>
+                        <div class="part-name">手把开关 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="handlebarSwitch-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KOSO</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥180</span>
+                            </div>
+                            <a href="handlebarSwitch-koso.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RIKISO</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥98</span>
+                                <span class="price-original">¥148</span>
+                            </div>
+                            <a href="handlebarSwitch-rikiso.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 熄火开关 -->
+                <div class="part-card" data-part="killSwitch">
+                    <div class="part-header">
+                        <div class="part-code">EC4012</div>
+                        <div class="part-name">熄火开关 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥38</span>
+                                <span class="price-original">¥58</span>
+                            </div>
+                            <a href="killSwitch-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KOSO</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥28</span>
+                                <span class="price-original">¥42</span>
+                            </div>
+                            <a href="killSwitch-koso.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RICKEY</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥22</span>
+                                <span class="price-original">¥35</span>
+                            </div>
+                            <a href="killSwitch-rickey.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 制动系统 ========== -->
+        <div class="category-section" data-category="brake">
+            <div class="category-title"><i class="fas fa-hand-paper"></i> 制动系统 <span class="category-count">制动类配件</span></div>
+            <div class="parts-grid">
+                <!-- 刹车盘 -->
+                <div class="part-card" data-part="brakeDisc">
+                    <div class="part-header">
+                        <div class="part-code">BC-DISC</div>
+                        <div class="part-name">刹车盘 <span class="brand-count">2品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#2196F3"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">进口品质</div>
+                                <div class="brand-origin">进口</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥580</span>
+                                <span class="price-original">¥780</span>
+                            </div>
+                            <a href="brake-disc.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BREMBO布雷博</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥980</span>
+                                <span class="price-original">¥1,280</span>
+                            </div>
+                            <a href="brake-disc-brembo.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 刹车片 -->
+                <div class="part-card" data-part="brakePad">
+                    <div class="part-header">
+                        <div class="part-code">BC5001/BC5002</div>
+                        <div class="part-name">刹车片 <span class="brand-count">5品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BREMBO布雷博</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥380</span>
+                                <span class="price-original">¥520</span>
+                            </div>
+                            <a href="brake-disc-brembo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">EBC</div>
+                                <div class="brand-origin">英国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥280</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="frontBrakePad-ebc.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">Ferodo</div>
+                                <div class="brand-origin">英国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥320</span>
+                                <span class="price-original">¥450</span>
+                            </div>
+                            <a href="frontBrakePad-ferodo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BREMBO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥320</span>
+                                <span class="price-original">¥450</span>
+                            </div>
+                            <a href="rearBrakePad-brembo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SBS</div>
+                                <div class="brand-origin">丹麦</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥220</span>
+                                <span class="price-original">¥320</span>
+                            </div>
+                            <a href="rearBrakePad-sbs.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CLENT</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="rearBrakePad-clent.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 刹车蹄块 -->
+                <div class="part-card" data-part="brakeShoe">
+                    <div class="part-header">
+                        <div class="part-code">BC5003</div>
+                        <div class="part-name">刹车蹄块 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NISSHINBO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥88</span>
+                                <span class="price-original">¥128</span>
+                            </div>
+                            <a href="brakeShoe-nisshinbo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BREMBO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥168</span>
+                            </div>
+                            <a href="brakeShoe-brembo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">FRENZ</div>
+                                <div class="brand-origin">澳大利亚</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥98</span>
+                                <span class="price-original">¥145</span>
+                            </div>
+                            <a href="brakeShoe-frenz.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#00BCD4"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NISSAN日清纺</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥78</span>
+                                <span class="price-original">¥118</span>
+                            </div>
+                            <a href="brake-shoe-nissan.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 刹车泵 -->
+                <div class="part-card" data-part="brakePump">
+                    <div class="part-header">
+                        <div class="part-code">BC5004</div>
+                        <div class="part-name">刹车泵 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NISSO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="brakePump-nisso.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BREMBO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥280</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="brakePump-brembo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SUMITOMO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥160</span>
+                                <span class="price-original">¥220</span>
+                            </div>
+                            <a href="brakePump-sumitomo.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 刹车总泵 -->
+                <div class="part-card" data-part="brakeMaster">
+                    <div class="part-header">
+                        <div class="part-code">BC5009</div>
+                        <div class="part-name">刹车总泵 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BREMBO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="brakeMaster-brembo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NISSO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥380</span>
+                                <span class="price-original">¥520</span>
+                            </div>
+                            <a href="brakeMaster-nisso.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SUMITOMO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥420</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="brakeMaster-sumitomo.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 刹车分泵 -->
+                <div class="part-card" data-part="brakeCaliper">
+                    <div class="part-header">
+                        <div class="part-code">BC5010</div>
+                        <div class="part-name">刹车分泵 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BREMBO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥680</span>
+                                <span class="price-original">¥980</span>
+                            </div>
+                            <a href="brakeCaliper-brembo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NISSIN</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥520</span>
+                                <span class="price-original">¥720</span>
+                            </div>
+                            <a href="brakeCaliper-nissin.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SUNSTAR</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="brakeCaliper-sunstar.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 刹车线 -->
+                <div class="part-card" data-part="brakeCable">
+                    <div class="part-header">
+                        <div class="part-code">BC5007</div>
+                        <div class="part-name">刹车线 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥28</span>
+                                <span class="price-original">¥42</span>
+                            </div>
+                            <a href="brakeCable-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">ALLBALLS</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥35</span>
+                                <span class="price-original">¥52</span>
+                            </div>
+                            <a href="brakeCable-allballs.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MAGURA</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥48</span>
+                                <span class="price-original">¥68</span>
+                            </div>
+                            <a href="brakeCable-magura.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 离合线 -->
+                <div class="part-card" data-part="clutchCable">
+                    <div class="part-header">
+                        <div class="part-code">BC5008</div>
+                        <div class="part-name">离合线 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥28</span>
+                                <span class="price-original">¥42</span>
+                            </div>
+                            <a href="clutchCable-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">ALLBALLS</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥35</span>
+                                <span class="price-original">¥52</span>
+                            </div>
+                            <a href="clutchCable-allballs.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MAGURA</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥48</span>
+                                <span class="price-original">¥68</span>
+                            </div>
+                            <a href="clutchCable-magura.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 刹车手柄 -->
+                <div class="part-card" data-part="brakeLever">
+                    <div class="part-header">
+                        <div class="part-code">BC5006</div>
+                        <div class="part-name">刹车手柄 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BREMBO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥168</span>
+                            </div>
+                            <a href="brakeLever-brembo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CRG</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="brakeLever-crg.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PAINLESS</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥140</span>
+                                <span class="price-original">¥200</span>
+                            </div>
+                            <a href="brakeLever-painless.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 离合器手柄 -->
+                <div class="part-card" data-part="clutchLever">
+                    <div class="part-header">
+                        <div class="part-code">BC5005</div>
+                        <div class="part-name">离合器手柄 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF0000"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BREMBO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥168</span>
+                            </div>
+                            <a href="clutchLever-brembo.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CRG</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="clutchLever-crg.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">ASV</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥150</span>
+                                <span class="price-original">¥220</span>
+                            </div>
+                            <a href="clutchLever-asv.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 传动系统 ========== -->
+        <div class="category-section" data-category="transmission">
+            <div class="category-title"><i class="fas fa-link"></i> 传动系统 <span class="category-count">传动类配件</span></div>
+            <div class="parts-grid">
+                <!-- 链条 -->
+                <div class="part-card" data-part="chain">
+                    <div class="part-header">
+                        <div class="part-code">TC6007</div>
+                        <div class="part-name">链条 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DID</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥458</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="chain.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GATES盖茨</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥328</span>
+                                <span class="price-original">¥428</span>
+                            </div>
+                            <a href="chain-gates.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RK</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥388</span>
+                                <span class="price-original">¥520</span>
+                            </div>
+                            <a href="chain-rk.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 传动皮带 -->
+                <div class="part-card" data-part="driveBelt">
+                    <div class="part-header">
+                        <div class="part-code">TC6001</div>
+                        <div class="part-name">传动皮带 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DID</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="drive-belt-did.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GATES盖茨</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥150</span>
+                                <span class="price-original">¥220</span>
+                            </div>
+                            <a href="driveBelt-gates.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MITSUBOSHI</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥168</span>
+                                <span class="price-original">¥240</span>
+                            </div>
+                            <a href="driveBelt-mitsuboshi.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 普利珠 -->
+                <div class="part-card" data-part="variatorRoller">
+                    <div class="part-header">
+                        <div class="part-code">TC6002</div>
+                        <div class="part-name">普利珠 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">POLINI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥68</span>
+                                <span class="price-original">¥98</span>
+                            </div>
+                            <a href="variatorRoller-polini.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HEPTA</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥58</span>
+                                <span class="price-original">¥85</span>
+                            </div>
+                            <a href="variatorRoller-hepta.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DR PULLEY</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥78</span>
+                                <span class="price-original">¥110</span>
+                            </div>
+                            <a href="variatorRoller-drpully.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 碗公 -->
+                <div class="part-card" data-part="clutchBell">
+                    <div class="part-header">
+                        <div class="part-code">TC6003</div>
+                        <div class="part-name">碗公 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">POLINI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥280</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="clutchBell-polini.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MALOSSI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥320</span>
+                                <span class="price-original">¥450</span>
+                            </div>
+                            <a href="clutchBell-malossi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CROW</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="clutchBell-crow.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 离合器 -->
+                <div class="part-card" data-part="clutch">
+                    <div class="part-header">
+                        <div class="part-code">TC6004</div>
+                        <div class="part-name">离合器 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">POLINI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="clutch-polini.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MALOSSI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥520</span>
+                                <span class="price-original">¥720</span>
+                            </div>
+                            <a href="clutch-malossi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BARNETT</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥380</span>
+                                <span class="price-original">¥520</span>
+                            </div>
+                            <a href="clutch-barnett.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 主动轮 -->
+                <div class="part-card" data-part="drivePulley">
+                    <div class="part-header">
+                        <div class="part-code">TC6005</div>
+                        <div class="part-name">主动轮 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">POLINI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥580</span>
+                                <span class="price-original">¥820</span>
+                            </div>
+                            <a href="drivePulley-polini.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HEPTA</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥520</span>
+                                <span class="price-original">¥720</span>
+                            </div>
+                            <a href="drivePulley-hepta.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MULLER</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="drivePulley-muller.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 从动轮 -->
+                <div class="part-card" data-part="drivenPulley">
+                    <div class="part-header">
+                        <div class="part-code">TC6006</div>
+                        <div class="part-name">从动轮 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">POLINI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥420</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="drivenPulley-polini.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MALOSSI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="drivenPulley-malossi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CROW</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥320</span>
+                                <span class="price-original">¥450</span>
+                            </div>
+                            <a href="drivenPulley-crow.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 链条接头 -->
+                <div class="part-card" data-part="chainConnector">
+                    <div class="part-header">
+                        <div class="part-code">TC6008</div>
+                        <div class="part-name">链条接头 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">DID</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥18</span>
+                                <span class="price-original">¥28</span>
+                            </div>
+                            <a href="chainConnector-did.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">EK</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥15</span>
+                                <span class="price-original">¥25</span>
+                            </div>
+                            <a href="chainConnector-ek.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RK</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥16</span>
+                                <span class="price-original">¥26</span>
+                            </div>
+                            <a href="chainConnector-rk.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 油门线 -->
+                <div class="part-card" data-part="throttleCable">
+                    <div class="part-header">
+                        <div class="part-code">TC6009</div>
+                        <div class="part-name">油门线 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥38</span>
+                                <span class="price-original">¥58</span>
+                            </div>
+                            <a href="throttleCable-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">ALLBALLS</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥45</span>
+                                <span class="price-original">¥68</span>
+                            </div>
+                            <a href="throttleCable-allballs.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MAGURA</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥58</span>
+                                <span class="price-original">¥85</span>
+                            </div>
+                            <a href="throttleCable-magura.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 油门把手 -->
+                <div class="part-card" data-part="throttleGrip">
+                    <div class="part-header">
+                        <div class="part-code">TC6010</div>
+                        <div class="part-name">油门把手 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">ODI</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥88</span>
+                                <span class="price-original">¥128</span>
+                            </div>
+                            <a href="throttleGrip-odi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PROTAPER</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥168</span>
+                            </div>
+                            <a href="throttleGrip-protaper.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RENTHAL</div>
+                                <div class="brand-origin">英国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥98</span>
+                                <span class="price-original">¥145</span>
+                            </div>
+                            <a href="throttleGrip-renthal.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 车架与悬挂 ========== -->
+        <div class="category-section" data-category="frame">
+            <div class="category-title"><i class="fas fa-bicycle"></i> 车架与悬挂 <span class="category-count">车架类配件</span></div>
+            <div class="parts-grid">
+                <!-- 前减震器 -->
+                <div class="part-card" data-part="frontShock">
+                    <div class="part-header">
+                        <div class="part-code">FC3001</div>
+                        <div class="part-name">前减震器 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KYB</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥1,380</span>
+                                <span class="price-original">¥1,880</span>
+                            </div>
+                            <a href="shock-absorber.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SACHS</div>
+                                <div class="brand-origin">德国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥1,580</span>
+                                <span class="price-original">¥2,180</span>
+                            </div>
+                            <a href="shock-absorber-sachs.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SHOWA昭和</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥1,280</span>
+                                <span class="price-original">¥1,680</span>
+                            </div>
+                            <a href="frontShock-showa.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KYB</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥1,380</span>
+                                <span class="price-original">¥1,880</span>
+                            </div>
+                            <a href="frontShock-kyb.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 后减震器 -->
+                <div class="part-card" data-part="rearShock">
+                    <div class="part-header">
+                        <div class="part-code">FC3002</div>
+                        <div class="part-name">后减震器 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KAYABA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥880</span>
+                                <span class="price-original">¥1,280</span>
+                            </div>
+                            <a href="rear-shock-kayaba.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#8B4513"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HAGON</div>
+                                <div class="brand-origin">英国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥1,280</span>
+                                <span class="price-original">¥1,780</span>
+                            </div>
+                            <a href="rearShock-hagon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">ELKA</div>
+                                <div class="brand-origin">加拿大</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥1,580</span>
+                                <span class="price-original">¥2,180</span>
+                            </div>
+                            <a href="rearShock-elka.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 方向把 -->
+                <div class="part-card" data-part="handlebar">
+                    <div class="part-header">
+                        <div class="part-code">FC3003</div>
+                        <div class="part-name">方向把 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NITTO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥280</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="handlebar-nitto.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PROTAPER</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥380</span>
+                                <span class="price-original">¥520</span>
+                            </div>
+                            <a href="handlebar-protaper.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RENTHAL</div>
+                                <div class="brand-origin">英国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥420</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="handlebar-renthal.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 方向柱 -->
+                <div class="part-card" data-part="steeringColumn">
+                    <div class="part-header">
+                        <div class="part-code">FC3004</div>
+                        <div class="part-name">方向柱 <span class="brand-count">2品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NITTO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥680</span>
+                                <span class="price-original">¥980</span>
+                            </div>
+                            <a href="frame-nitto.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KAYABA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥720</span>
+                                <span class="price-original">¥1,020</span>
+                            </div>
+                            <a href="steeringColumn-kayaba.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SHOWA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥780</span>
+                                <span class="price-original">¥1,080</span>
+                            </div>
+                            <a href="steeringColumn-showa.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 主支架 -->
+                <div class="part-card" data-part="mainStand">
+                    <div class="part-header">
+                        <div class="part-code">FC3005</div>
+                        <div class="part-name">主支架 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KIJIMA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="mainStand-kijima.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CRM</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥180</span>
+                            </div>
+                            <a href="mainStand-crm.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GIVI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥220</span>
+                                <span class="price-original">¥320</span>
+                            </div>
+                            <a href="mainStand-givi.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 侧支架 -->
+                <div class="part-card" data-part="sideStand">
+                    <div class="part-header">
+                        <div class="part-code">FC3006</div>
+                        <div class="part-name">侧支架 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KIJIMA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥80</span>
+                                <span class="price-original">¥120</span>
+                            </div>
+                            <a href="sideStand-kijima.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HYPERPRO</div>
+                                <div class="brand-origin">荷兰</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥180</span>
+                            </div>
+                            <a href="sideStand-hyperpro.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GIVI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥100</span>
+                                <span class="price-original">¥150</span>
+                            </div>
+                            <a href="sideStand-givi.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 链轮 -->
+                <div class="part-card" data-part="sprocket">
+                    <div class="part-header">
+                        <div class="part-code">FC3007</div>
+                        <div class="part-name">链轮 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">AFAM</div>
+                                <div class="brand-origin">比利时</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="sprocket-afam.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SUNSTAR</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥160</span>
+                                <span class="price-original">¥220</span>
+                            </div>
+                            <a href="sprocket-sunstar.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PBR</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥200</span>
+                                <span class="price-original">¥280</span>
+                            </div>
+                            <a href="sprocket-pbr.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 后平叉 -->
+                <div class="part-card" data-part="rearSwingarm">
+                    <div class="part-header">
+                        <div class="part-code">FC3008</div>
+                        <div class="part-name">后平叉 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NITTO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥1,280</span>
+                                <span class="price-original">¥1,780</span>
+                            </div>
+                            <a href="rearSwingarm-nitto.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GPM</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥880</span>
+                                <span class="price-original">¥1,280</span>
+                            </div>
+                            <a href="rearSwingarm-gpm.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#8B4513"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HAGON</div>
+                                <div class="brand-origin">英国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥1,680</span>
+                                <span class="price-original">¥2,380</span>
+                            </div>
+                            <a href="rearSwingarm-hagon.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 前叉总成 -->
+                <div class="part-card" data-part="frontFork">
+                    <div class="part-header">
+                        <div class="part-code">FC3009</div>
+                        <div class="part-name">前叉总成 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SHOWA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥2,280</span>
+                                <span class="price-original">¥3,280</span>
+                            </div>
+                            <a href="frontFork-showa.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MARZOCCHI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥2,580</span>
+                                <span class="price-original">¥3,580</span>
+                            </div>
+                            <a href="frontFork-marzocchi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">WP</div>
+                                <div class="brand-origin">奥地利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥2,880</span>
+                                <span class="price-original">¥4,080</span>
+                            </div>
+                            <a href="frontFork-wp.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 车架 -->
+                <div class="part-card" data-part="frame">
+                    <div class="part-header">
+                        <div class="part-code">FC-FRAME</div>
+                        <div class="part-name">车架 <span class="brand-count">2品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#607D8B"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">铝合金车架</div>
+                                <div class="brand-origin">国产</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥3,980</span>
+                                <span class="price-original">¥5,200</span>
+                            </div>
+                            <a href="frame.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NITTO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥4,580</span>
+                                <span class="price-original">¥5,980</span>
+                            </div>
+                            <a href="frame-nitto.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 车把开关 -->
+                <div class="part-card" data-part="handleSwitch">
+                    <div class="part-header">
+                        <div class="part-code">FC3010</div>
+                        <div class="part-name">车把开关 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NIPPON</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="handleSwitch-nippon.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">ODI</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥150</span>
+                                <span class="price-original">¥220</span>
+                            </div>
+                            <a href="handleSwitch-odi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RIKISO</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥180</span>
+                            </div>
+                            <a href="handleSwitch-rikiso.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== 外观与装饰 ========== -->
+        <div class="category-section" data-category="exterior">
+            <div class="category-title"><i class="fas fa-car"></i> 外观与装饰 <span class="category-count">外观件</span></div>
+            <div class="parts-grid">
+                <!-- 轮胎 -->
+                <div class="part-card" data-part="tire">
+                    <div class="part-header">
+                        <div class="part-code">EXT-TIRE</div>
+                        <div class="part-name">摩托车轮胎 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#607D8B"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">倍耐力Pirelli</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥680</span>
+                                <span class="price-original">¥880</span>
+                            </div>
+                            <a href="tire.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CMT正新</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥380</span>
+                                <span class="price-original">¥520</span>
+                            </div>
+                            <a href="tire-cmt.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">KENDA建大</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥420</span>
+                                <span class="price-original">¥580</span>
+                            </div>
+                            <a href="tire-kenda.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 排气管 -->
+                <div class="part-card" data-part="exhaust">
+                    <div class="part-header">
+                        <div class="part-code">EXT-EXHAUST</div>
+                        <div class="part-name">排气管 <span class="brand-count">2品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#8B4513"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">MIVV</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥8,800</span>
+                                <span class="price-original">¥12,800</span>
+                            </div>
+                            <a href="exhaust.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">TUCANO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥6,800</span>
+                                <span class="price-original">¥9,800</span>
+                            </div>
+                            <a href="exhaust-tucano.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 导流罩 -->
+                <div class="part-card" data-part="fairing">
+                    <div class="part-header">
+                        <div class="part-code">AC7003</div>
+                        <div class="part-name">导流罩 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CSUN旭升</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥2,880</span>
+                                <span class="price-original">¥3,800</span>
+                            </div>
+                            <a href="fairing-csun.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">STUDIO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥4,580</span>
+                                <span class="price-original">¥5,800</span>
+                            </div>
+                            <a href="fairing-studio.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PUIG</div>
+                                <div class="brand-origin">西班牙</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥3,280</span>
+                                <span class="price-original">¥4,280</span>
+                            </div>
+                            <a href="fairing-puig.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#673AB7"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">LED改装</div>
+                                <div class="brand-origin">改装</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥2,180</span>
+                                <span class="price-original">¥3,200</span>
+                            </div>
+                            <a href="fairing.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 前挡泥板 -->
+                <div class="part-card" data-part="frontFender">
+                    <div class="part-header">
+                        <div class="part-code">AC7001</div>
+                        <div class="part-name">前挡泥板 <span class="brand-count">2品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BAJA</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥220</span>
+                                <span class="price-original">¥320</span>
+                            </div>
+                            <a href="frontFender-baja.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PUIG</div>
+                                <div class="brand-origin">西班牙</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥280</span>
+                                <span class="price-original">¥380</span>
+                            </div>
+                            <a href="frontFender-puig.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 后挡泥板 -->
+                <div class="part-card" data-part="rearFender">
+                    <div class="part-header">
+                        <div class="part-code">AC7002</div>
+                        <div class="part-name">后挡泥板 <span class="brand-count">2品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BAJA</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥200</span>
+                                <span class="price-original">¥280</span>
+                            </div>
+                            <a href="rearFender-baja.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">WINGS</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥250</span>
+                                <span class="price-original">¥350</span>
+                            </div>
+                            <a href="rearFender-wings.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 后视镜 -->
+                <div class="part-card" data-part="rearviewMirror">
+                    <div class="part-header">
+                        <div class="part-code">AC7004</div>
+                        <div class="part-name">后视镜 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CRG</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥168</span>
+                            </div>
+                            <a href="rearviewMirror-crg.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">RICHEY</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥68</span>
+                                <span class="price-original">¥98</span>
+                            </div>
+                            <a href="rearviewMirror-richey.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GIVI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥88</span>
+                                <span class="price-original">¥128</span>
+                            </div>
+                            <a href="rearviewMirror-givi.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 座垫 -->
+                <div class="part-card" data-part="seat">
+                    <div class="part-header">
+                        <div class="part-code">AC7005</div>
+                        <div class="part-name">座垫 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">TANAKA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥480</span>
+                                <span class="price-original">¥680</span>
+                            </div>
+                            <a href="seat-tanaka.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">SPILL</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥580</span>
+                                <span class="price-original">¥820</span>
+                            </div>
+                            <a href="seat-spill.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#8B4513"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CORBIN</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥880</span>
+                                <span class="price-original">¥1,280</span>
+                            </div>
+                            <a href="seat-corbin.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 油箱盖 -->
+                <div class="part-card" data-part="fuelCap">
+                    <div class="part-header">
+                        <div class="part-code">AC7006</div>
+                        <div class="part-name">油箱盖 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">NITTO</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥88</span>
+                                <span class="price-original">¥128</span>
+                            </div>
+                            <a href="fuelCap-nitto.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GIVI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥168</span>
+                            </div>
+                            <a href="fuelCap-givi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BAJA</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥98</span>
+                                <span class="price-original">¥145</span>
+                            </div>
+                            <a href="fuelCap-baja.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 侧盖板 -->
+                <div class="part-card" data-part="sideCover">
+                    <div class="part-header">
+                        <div class="part-code">AC7007</div>
+                        <div class="part-name">侧盖板 <span class="brand-count">2品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CSUN</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="fairing-csun.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">STUDIO</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥320</span>
+                                <span class="price-original">¥450</span>
+                            </div>
+                            <a href="sideCover-studio.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BAJA</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥220</span>
+                                <span class="price-original">¥320</span>
+                            </div>
+                            <a href="sideCover-baja.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 脚蹬 -->
+                <div class="part-card" data-part="footpeg">
+                    <div class="part-header">
+                        <div class="part-code">AC7008</div>
+                        <div class="part-name">脚蹬 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CRG</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥180</span>
+                                <span class="price-original">¥260</span>
+                            </div>
+                            <a href="footpeg-crg.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">ARAI</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥220</span>
+                                <span class="price-original">¥320</span>
+                            </div>
+                            <a href="footpeg-arai.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BIKE</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥120</span>
+                                <span class="price-original">¥180</span>
+                            </div>
+                            <a href="footpeg-bike.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 脚踏板 -->
+                <div class="part-card" data-part="footboard">
+                    <div class="part-header">
+                        <div class="part-code">AC7009</div>
+                        <div class="part-name">脚踏板 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">GIVI</div>
+                                <div class="brand-origin">意大利</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥88</span>
+                                <span class="price-original">¥128</span>
+                            </div>
+                            <a href="footboard-givi.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#228B22"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">BAJA</div>
+                                <div class="brand-origin">美国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥68</span>
+                                <span class="price-original">¥98</span>
+                            </div>
+                            <a href="footboard-baja.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">HECTOR</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥48</span>
+                                <span class="price-original">¥72</span>
+                            </div>
+                            <a href="footboard-hector.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 牌照灯 -->
+                <div class="part-card" data-part="licensePlateLight">
+                    <div class="part-header">
+                        <div class="part-code">AC7010</div>
+                        <div class="part-name">牌照灯 <span class="brand-count">3品牌</span></div>
+                    </div>
+                    <div class="brands-list">
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FF6600"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">LED</div>
+                                <div class="brand-origin">台湾</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥28</span>
+                                <span class="price-original">¥42</span>
+                            </div>
+                            <a href="licensePlateLight-led.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#0066CC"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">PIAA</div>
+                                <div class="brand-origin">日本</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥48</span>
+                                <span class="price-original">¥68</span>
+                            </div>
+                            <a href="licensePlateLight-piaa.html" class="view-btn-small">查看</a>
+                        </div>
+                        <div class="brand-item">
+                            <div class="brand-color" style="background:#FFD700"></div>
+                            <div class="brand-info">
+                                <div class="brand-name">CIBIE</div>
+                                <div class="brand-origin">法国</div>
+                            </div>
+                            <div class="brand-price">
+                                <span class="price-current">¥58</span>
+                                <span class="price-original">¥85</span>
+                            </div>
+                            <a href="licensePlateLight-cibie.html" class="view-btn-small">查看</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>本页面为摩托车配件电商展示 Demo | 配图来源：Unsplash</p>
+            <p style="margin-top: 10px;">项目路径：d:\idea_space\MotorcyclePartsProcurementSystem\ecommerce-demo\</p>
+            <p style="margin-top: 10px;">数据来源：基于 DatabaseInitializer.java 模拟数据生成</p>
+        </div>
+    </div>
+
+    <script>
+        function filterCategory(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.category-section').forEach(section => {
+                if (category === 'all') {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = section.dataset.category === category ? 'block' : 'none';
+                }
+            });
+        }
+
+        function filterParts() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.part-card').forEach(card => {
+                const partName = card.querySelector('.part-name').textContent.toLowerCase();
+                const brandNames = Array.from(card.querySelectorAll('.brand-name')).map(b => b.textContent.toLowerCase());
+                const match = partName.includes(searchText) || brandNames.some(b => b.includes(searchText));
+                card.style.display = match ? 'block' : 'none';
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterParts);
+    </script>
+</body>
+</html>
